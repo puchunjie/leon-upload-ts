@@ -1,0 +1,108 @@
+{
+	"name": "leonupload",
+	"displayName": "leon-upload",
+	"description": "狮子座图片上传插件",
+	"version": "1.0.2",
+	"publisher": "jeremypcj",
+	"engines": {
+		"vscode": "^1.46.0"
+	},
+	"icon": "https://file.40017.cn/trainwechat/product/miniapp/common/icon/leon.png",
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "leonupload.choosedImage",
+				"title": "leon选择图片"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorFocus",
+					"command": "leonupload.choosedImage",
+					"group": "navigation"
+				}
+			],
+			"view/title": []
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "leon-explorer",
+					"title": "狮子座静态资源",
+					"icon": "images/leon.svg"
+				}
+			]
+		},
+		"views": {
+			"leon-explorer": [
+				{
+					"id": "leonMain",
+					"name": "狮子座容器",
+					"when": "explorer"
+				}
+			]
+		},
+		"configuration": [
+			{
+				"title": "狮子座上传工具配置",
+				"key": "upload_leon_config",
+				"properties": {
+					"leon_upload_image.domain": {
+						"type": "string",
+						"default": "",
+						"description": "设置上传域名"
+					},
+					"leon_upload_image.accessKey": {
+						"type": "string",
+						"default": "",
+						"description": "设置狮子座上传accessKey"
+					},
+					"leon_upload_image.userToken": {
+						"type": "string",
+						"default": "",
+						"description": "设置狮子座上传userToken"
+					},
+					"leon_upload_image.bucket": {
+						"type": "string",
+						"default": "",
+						"description": "设置狮子座bucket（train4in1...）"
+					},
+					"leon_upload_image.folder": {
+						"type": "string",
+						"default": "",
+						"description": "设置狮子座上传空间的文件夹地址"
+					}
+				}
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.46.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"eslint": "^7.19.0",
+		"@typescript-eslint/eslint-plugin": "^4.14.1",
+		"@typescript-eslint/parser": "^4.14.1",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0"
+	}
+}
