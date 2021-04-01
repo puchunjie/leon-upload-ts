@@ -4,10 +4,15 @@ const url = require("url");
 const path = require("path");
 import * as vscode from "vscode";
 import leonParams from "./getLeonSetting";
+import { computedViewUri } from './index'
 const boundary = "----WebKitFormBoundaryAGJoBU0nvDkk5Xb0";
 
-export const handleImageToLeon: any = async (localFile: string) => {
-  const { apiUrl, userToken, assetKey, bucketName, folder } = leonParams || {};
+export const handleImageToLeon: any = async (localFile: string, ops?: any) => {
+  let { apiUrl, userToken, assetKey, bucketName, folder } = leonParams || {};
+  if (ops) {
+    bucketName = ops.bucketName;
+    folder = ops.key;
+  } 
   try {
     return new Promise((resolve, reject) => {
       if (!apiUrl || !userToken || !assetKey || !bucketName) {
@@ -48,7 +53,7 @@ export const handleImageToLeon: any = async (localFile: string) => {
             if (jsonRes.code === 0) {
               resolve({
                 isOk: true,
-                url: `https://file.40017.cn/${bucketName}${folder}${filename}`,
+                url: computedViewUri(bucketName, filename, folder),
               });
             } else {
               resolve({

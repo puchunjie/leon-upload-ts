@@ -20,6 +20,38 @@
 			{
 				"command": "leonupload.choosedImage",
 				"title": "leon选择图片"
+			},
+			{
+				"command": "leonMain.refreshEntry",
+				"title": "刷新列表",
+				"icon": {
+					"light": "images/refresh.svg",
+					"dark": "images/refresh.svg"
+				}
+			},
+			{
+				"command": "leonMain.addFile",
+				"title": "上传图片",
+				"icon": {
+					"light": "images/upload.svg",
+					"dark": "images/upload.svg"
+				}
+			},
+			{
+				"command": "leonMain.addFloder",
+				"title": "新增文件夹",
+				"icon": {
+					"light": "images/add.svg",
+					"dark": "images/add.svg"
+				}
+			},
+			{
+				"command": "leonMain.viewFile",
+				"title": "预览图片",
+				"icon": {
+					"light": "images/view.svg",
+					"dark": "images/view.svg"
+				}
 			}
 		],
 		"menus": {
@@ -30,7 +62,30 @@
 					"group": "navigation"
 				}
 			],
-			"view/title": []
+			"view/title": [
+				{
+					"command": "leonMain.refreshEntry",
+					"when": "view == leonMain",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "leonMain.addFile",
+					"when": "view == leonMain && viewItem == Floder",
+					"group": "inline"
+				},
+				{
+					"command": "leonMain.addFloder",
+					"when": "view == leonMain && viewItem == Floder",
+					"group": "inline"
+				},
+				{
+					"command": "leonMain.viewFile",
+					"when": "view == leonMain && viewItem == File",
+					"group": "inline"
+				}
+			]
 		},
 		"viewsContainers": {
 			"activitybar": [
@@ -45,8 +100,7 @@
 			"leon-explorer": [
 				{
 					"id": "leonMain",
-					"name": "狮子座容器",
-					"when": "explorer"
+					"name": "狮子座容器"
 				}
 			]
 		},

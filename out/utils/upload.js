@@ -16,9 +16,14 @@ const url = require("url");
 const path = require("path");
 const vscode = require("vscode");
 const getLeonSetting_1 = require("./getLeonSetting");
+const index_1 = require("./index");
 const boundary = "----WebKitFormBoundaryAGJoBU0nvDkk5Xb0";
-const handleImageToLeon = (localFile) => __awaiter(void 0, void 0, void 0, function* () {
-    const { apiUrl, userToken, assetKey, bucketName, folder } = getLeonSetting_1.default || {};
+const handleImageToLeon = (localFile, ops) => __awaiter(void 0, void 0, void 0, function* () {
+    let { apiUrl, userToken, assetKey, bucketName, folder } = getLeonSetting_1.default || {};
+    if (ops) {
+        bucketName = ops.bucketName;
+        folder = ops.key;
+    }
     try {
         return new Promise((resolve, reject) => {
             if (!apiUrl || !userToken || !assetKey || !bucketName) {
@@ -58,7 +63,7 @@ const handleImageToLeon = (localFile) => __awaiter(void 0, void 0, void 0, funct
                         if (jsonRes.code === 0) {
                             resolve({
                                 isOk: true,
-                                url: `https://file.40017.cn/${bucketName}${folder}${filename}`,
+                                url: index_1.computedViewUri(bucketName, filename, folder),
                             });
                         }
                         else {
