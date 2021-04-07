@@ -46,11 +46,11 @@
 				}
 			},
 			{
-				"command": "leonMain.viewFile",
-				"title": "预览图片",
+				"command": "leonMain.copyLink",
+				"title": "复制链接",
 				"icon": {
-					"light": "images/view.svg",
-					"dark": "images/view.svg"
+					"light": "images/copy.svg",
+					"dark": "images/copy.svg"
 				}
 			}
 		],
@@ -76,12 +76,7 @@
 					"group": "inline"
 				},
 				{
-					"command": "leonMain.addFloder",
-					"when": "view == leonMain && viewItem == Floder",
-					"group": "inline"
-				},
-				{
-					"command": "leonMain.viewFile",
+					"command": "leonMain.copyLink",
 					"when": "view == leonMain && viewItem == File",
 					"group": "inline"
 				}

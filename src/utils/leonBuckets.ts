@@ -1,16 +1,21 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { getBuckets, getDataList } from "./leonApi";
+import { imgTypes, otherTypes } from './fileTypes';
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
-  private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | void> = new vscode.EventEmitter<Dependency | undefined | void>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | void> = this._onDidChangeTreeData.event;
-  
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    Dependency | undefined | void
+  > = new vscode.EventEmitter<Dependency | undefined | void>();
+  readonly onDidChangeTreeData: vscode.Event<
+    Dependency | undefined | void
+  > = this._onDidChangeTreeData.event;
+
   constructor() {}
 
   refresh(): void {
-		this._onDidChangeTreeData.fire();
-	}
+    this._onDidChangeTreeData.fire();
+  }
 
   getTreeItem(element: Dependency): vscode.TreeItem {
     return element;
@@ -27,7 +32,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
             {
               bucketName,
               key: `/${item.key}`,
-              contextValue: isFile ? 'File' : 'Floder'
+              contextValue: isFile ? "File" : "Floder",
             },
             item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""),
             item.key,
@@ -48,7 +53,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
             {
               bucketName: item.bucket_name,
               key: "/",
-              contextValue: 'Floder'
+              contextValue: "Floder",
             },
             item.bucket_name,
             item.asset_key,
@@ -60,12 +65,10 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
         return Promise.resolve([]);
       }
     }
-
-    // const item = new Dependency({'1','2', vscode.TreeItemCollapsibleState.Collapsed});
   }
 
   private isFile(fileName: string) {
-    const ends = [".png", ".svg", ".jpg", ".jpeg", ".html", ".text", ".zip"];
+    const ends = [...imgTypes, ...otherTypes];
     return ends.some((e) => fileName.includes(e));
   }
 }
@@ -75,15 +78,18 @@ export class Dependency extends vscode.TreeItem {
     public readonly ops: any,
     public readonly label: string,
     public readonly version: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {
     super(label, collapsibleState);
     this.contextValue = ops.contextValue;
   }
 
-  // iconPath = {
-  // 	light: '../../images/floder.svg',
-  // 	dark: '../../images/floder.svg'
-  // };
+  command = {
+    title: this.label, // 标题
+    command: "itemClick", // 命令 ID
+    tooltip: this.label, // 鼠标覆盖时的小小提示框
+    arguments: [
+      this.ops, // 目前这里我们只传递一个 label
+    ],
+  };
 }

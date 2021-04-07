@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dependency = exports.DepNodeProvider = void 0;
 const vscode = require("vscode");
 const leonApi_1 = require("./leonApi");
+const fileTypes_1 = require("./fileTypes");
 class DepNodeProvider {
     constructor() {
         this._onDidChangeTreeData = new vscode.EventEmitter();
@@ -34,7 +35,7 @@ class DepNodeProvider {
                         return new Dependency({
                             bucketName,
                             key: `/${item.key}`,
-                            contextValue: isFile ? 'File' : 'Floder'
+                            contextValue: isFile ? "File" : "Floder",
                         }, item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""), item.key, isFile
                             ? vscode.TreeItemCollapsibleState.None
                             : vscode.TreeItemCollapsibleState.Collapsed);
@@ -52,7 +53,7 @@ class DepNodeProvider {
                         return new Dependency({
                             bucketName: item.bucket_name,
                             key: "/",
-                            contextValue: 'Floder'
+                            contextValue: "Floder",
                         }, item.bucket_name, item.asset_key, vscode.TreeItemCollapsibleState.Collapsed);
                     });
                     return Promise.resolve(result);
@@ -61,23 +62,29 @@ class DepNodeProvider {
                     return Promise.resolve([]);
                 }
             }
-            // const item = new Dependency({'1','2', vscode.TreeItemCollapsibleState.Collapsed});
         });
     }
     isFile(fileName) {
-        const ends = [".png", ".svg", ".jpg", ".jpeg", ".html", ".text", ".zip"];
+        const ends = [...fileTypes_1.imgTypes, ...fileTypes_1.otherTypes];
         return ends.some((e) => fileName.includes(e));
     }
 }
 exports.DepNodeProvider = DepNodeProvider;
 class Dependency extends vscode.TreeItem {
-    constructor(ops, label, version, collapsibleState, command) {
+    constructor(ops, label, version, collapsibleState) {
         super(label, collapsibleState);
         this.ops = ops;
         this.label = label;
         this.version = version;
         this.collapsibleState = collapsibleState;
-        this.command = command;
+        this.command = {
+            title: this.label,
+            command: "itemClick",
+            tooltip: this.label,
+            arguments: [
+                this.ops, // 目前这里我们只传递一个 label
+            ],
+        };
         this.contextValue = ops.contextValue;
     }
 }
