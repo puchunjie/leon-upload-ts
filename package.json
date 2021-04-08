@@ -2,12 +2,12 @@
 	"name": "leonupload",
 	"displayName": "leon-upload",
 	"description": "狮子座图片上传插件",
-	"version": "1.0.2",
+	"version": "2.0.0",
 	"publisher": "jeremypcj",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
-	"icon": "https://file.40017.cn/trainwechat/product/miniapp/common/icon/leon.png",
+	"icon": "images/leon.png",
 	"categories": [
 		"Other"
 	],
@@ -72,6 +72,11 @@
 			"view/item/context": [
 				{
 					"command": "leonMain.addFile",
+					"when": "view == leonMain && viewItem == Floder",
+					"group": "inline"
+				},
+				{
+					"command": "leonMain.addFloder",
 					"when": "view == leonMain && viewItem == Floder",
 					"group": "inline"
 				},

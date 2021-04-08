@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { getBuckets, getDataList } from "./leonApi";
-import { imgTypes, otherTypes } from './fileTypes';
+import { imgTypes, otherTypes } from "./fileTypes";
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
   private _onDidChangeTreeData: vscode.EventEmitter<

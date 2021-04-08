@@ -11,15 +11,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
-// import { exec } from 'child_process';
-const proc = require('child_process').spawn('pbcopy');
+const path = require("path");
+const proc = require("child_process").spawn("pbcopy");
 const upload_1 = require("./utils/upload");
 const leonBuckets_1 = require("./utils/leonBuckets");
 const index_1 = require("./utils/index");
 const fileTypes_1 = require("./utils/fileTypes");
 const render_1 = require("./utils/render");
 function activate(context) {
-    const disposable = vscode.commands.registerTextEditorCommand("leonupload.choosedImage", function () {
+    //边栏视图渲染
+    let buckets = new leonBuckets_1.DepNodeProvider();
+    vscode.window.registerTreeDataProvider("leonMain", buckets);
+    // 刷新边栏
+    const refleshBuckets = vscode.commands.registerCommand("leonMain.refreshEntry", () => {
+        buckets.refresh();
+        vscode.window.showInformationMessage("列表已刷新。");
+    });
+    context.subscriptions.push(refleshBuckets);
+    // 右键选择图片上传
+    const rightUpload = vscode.commands.registerTextEditorCommand("leonupload.choosedImage", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const uri = yield vscode.window.showOpenDialog({
                 canSelectFolders: false,
@@ -41,20 +51,23 @@ function activate(context) {
             }
         });
     });
-    context.subscriptions.push(disposable);
-    //边栏视图渲染
-    const buckets = new leonBuckets_1.DepNodeProvider();
-    vscode.window.registerTreeDataProvider("leonMain", buckets);
-    //文件点击预览
-    let panel = null;
-    vscode.commands.registerCommand("leonMain.copyLink", (itemData) => {
+    context.subscriptions.push(rightUpload);
+    // 点击复制链接
+    const copyLink = vscode.commands.registerCommand("leonMain.copyLink", (itemData) => {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
-        proc.stdin.write(imgUrl);
-        proc.stdin.end();
-        vscode.window.showInformationMessage('已复制到剪贴板。');
+        if (process.platform === 'darwin') {
+            proc.stdin.write(imgUrl);
+            vscode.window.showInformationMessage("已复制到剪贴板。");
+        }
+        else {
+            vscode.window.showErrorMessage('老铁，复制链接只实现了macOs版本！');
+        }
     });
-    vscode.commands.registerCommand("itemClick", (itemData) => {
+    context.subscriptions.push(copyLink);
+    //文件点击预览
+    let panel = null;
+    const itemClick = vscode.commands.registerCommand("itemClick", (itemData) => {
         const { bucketName, key } = itemData;
         const isImg = fileTypes_1.imgTypes.some((e) => key.includes(e));
         if (!isImg) {
@@ -75,8 +88,9 @@ function activate(context) {
         const imgTag = render_1.renderImg(imgUrl);
         panel.webview.html = `<html><body>${imgTag}</body></html>`;
     });
+    context.subscriptions.push(itemClick);
     //上传到指定文件夹
-    vscode.commands.registerCommand("leonMain.addFile", (itemData) => __awaiter(this, void 0, void 0, function* () {
+    const targetUpload = vscode.commands.registerCommand("leonMain.addFile", (itemData) => __awaiter(this, void 0, void 0, function* () {
         const { bucketName, key } = itemData.ops;
         const uri = yield vscode.window.showOpenDialog({
             canSelectFolders: false,
@@ -100,14 +114,31 @@ function activate(context) {
             vscode.window.showErrorMessage(msg);
         }
     }));
+    context.subscriptions.push(targetUpload);
     //新建文件夹
-    // vscode.commands.registerCommand(
-    //   "leonMain.addFloder",
-    //   (itemData: Dependency) => {
-    //     const { bucketName, key } = itemData.ops;
-    //     console.log({ bucketName, key });
-    //   }
-    // );
+    const newFloder = vscode.commands.registerCommand("leonMain.addFloder", (itemData) => {
+        const { bucketName, key } = itemData.ops;
+        vscode.window
+            .showInputBox({
+            password: false,
+            ignoreFocusOut: true,
+            placeHolder: "文件夹名字",
+        })
+            .then((floderName) => __awaiter(this, void 0, void 0, function* () {
+            if (!floderName) {
+                return;
+            }
+            const leonPlaceholder = path.resolve(__dirname, "utils/leonPlaceholder.js");
+            const { isOk } = yield upload_1.handleImageToLeon(leonPlaceholder, {
+                bucketName,
+                key: `${key}${floderName}/`,
+            });
+            if (isOk) {
+                buckets.refresh();
+            }
+        }));
+    });
+    context.subscriptions.push(newFloder);
 }
 exports.activate = activate;
 function deactivate() { }
