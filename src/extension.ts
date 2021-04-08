@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
         proc.stdin.write(imgUrl);
         vscode.window.showInformationMessage("已复制到剪贴板。");
       } else {
-        vscode.window.showErrorMessage('老铁，复制链接只实现了macOs版本！')
+        vscode.window.showErrorMessage('老铁，复制链接只实现了macOs版本！');
       }
     }
   );
