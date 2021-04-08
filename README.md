@@ -26,3 +26,6 @@
 
 ## 新增文件夹
 ![](https://file.40017.cn/trainwechat/product/miniapp/common/icon1/step6.png)
+
+## 编辑器内快捷上传
+![](https://file.40017.cn/train4in1/trackevent-frontend/2103181434/step4.png)
