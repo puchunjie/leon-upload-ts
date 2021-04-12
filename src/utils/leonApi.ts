@@ -33,7 +33,7 @@ export const getBuckets = () => {
   });
 };
 
-export const getDataList = (bucketName: string, key: string = '/') => {
+export const getDataList = (bucketName: string, key: string = "/") => {
   return new Promise((resolve, reject) => {
     const options = {
       headers: {
@@ -44,18 +44,22 @@ export const getDataList = (bucketName: string, key: string = '/') => {
     };
     const url =
       "http://leonidapi.17usoft.com/libraapi2/leonid/v2/static/object";
-      console.log(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`);
+    console.log(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`);
     http
-      .get(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`, options, (resp: any) => {
-        let data = "";
-        resp.on("data", (chunk: any) => {
-          data += chunk;
-        });
+      .get(
+        `${url}?bucket_name=${bucketName}&key=${key}&limit=10000`,
+        options,
+        (resp: any) => {
+          let data = "";
+          resp.on("data", (chunk: any) => {
+            data += chunk;
+          });
 
-        resp.on("end", () => {
-          resolve(JSON.parse(data));
-        });
-      })
+          resp.on("end", () => {
+            resolve(JSON.parse(data));
+          });
+        }
+      )
       .on("error", (err: any) => {
         reject(err);
         console.log("Error: " + err.message);

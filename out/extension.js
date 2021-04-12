@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const path = require("path");
-const proc = require("child_process").spawn("pbcopy");
+const spawn = require("child_process").spawn;
 const upload_1 = require("./utils/upload");
 const leonBuckets_1 = require("./utils/leonBuckets");
 const index_1 = require("./utils/index");
@@ -57,11 +57,12 @@ function activate(context) {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
         if (process.platform === 'darwin') {
-            proc.stdin.write(imgUrl);
+            spawn("pbcopy").stdin.write(imgUrl);
             vscode.window.showInformationMessage("已复制到剪贴板。");
         }
         else {
-            vscode.window.showErrorMessage('老铁，复制链接只实现了macOs版本！');
+            spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl} | clip`]);
+            vscode.window.showInformationMessage("已复制到剪贴板。");
         }
     });
     context.subscriptions.push(copyLink);

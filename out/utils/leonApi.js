@@ -30,7 +30,7 @@ const getBuckets = () => {
     });
 };
 exports.getBuckets = getBuckets;
-const getDataList = (bucketName, key = '/') => {
+const getDataList = (bucketName, key = "/") => {
     return new Promise((resolve, reject) => {
         const options = {
             headers: {
