@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const path = require("path");
-const spawn = require("child_process").spawn;
+const { spawn, exec } = require("child_process");
 const upload_1 = require("./utils/upload");
 const leonBuckets_1 = require("./utils/leonBuckets");
 const index_1 = require("./utils/index");
@@ -56,13 +56,17 @@ function activate(context) {
     const copyLink = vscode.commands.registerCommand("leonMain.copyLink", (itemData) => {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
-        if (process.platform === 'darwin') {
-            spawn("pbcopy").stdin.write(imgUrl);
+        try {
+            if (process.platform === 'darwin') {
+                exec(`echo ${imgUrl} | pbcopy`);
+            }
+            else {
+                spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl} | clip`]);
+            }
             vscode.window.showInformationMessage("已复制到剪贴板。");
         }
-        else {
-            spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl} | clip`]);
-            vscode.window.showInformationMessage("已复制到剪贴板。");
+        catch (error) {
+            vscode.window.showErrorMessage(error);
         }
     });
     context.subscriptions.push(copyLink);
@@ -83,8 +87,6 @@ function activate(context) {
                 retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
             });
         }
-        console.log(panel);
-        // panel.title(key);
         const imgUrl = index_1.computedViewUri(bucketName, key);
         const imgTag = render_1.renderImg(imgUrl);
         panel.webview.html = `<html><body>${imgTag}</body></html>`;
