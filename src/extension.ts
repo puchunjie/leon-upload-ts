@@ -54,10 +54,10 @@ export function activate(context: vscode.ExtensionContext) {
       const { bucketName, key } = itemData.ops;
       const imgUrl = computedViewUri(bucketName, key);
       try {
-        if (process.platform === 'darwin') {
+        if (process.platform === "darwin") {
           exec(`echo ${imgUrl} | pbcopy`);
         } else {
-          spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl}| clip`]);
+          spawn("cmd.exe", ["/s", "/c", `echo ${imgUrl}| clip`]);
         }
         vscode.window.showInformationMessage("已复制到剪贴板。");
       } catch (error) {
@@ -140,7 +140,10 @@ export function activate(context: vscode.ExtensionContext) {
           if (!floderName) {
             return;
           }
-          const leonPlaceholder = path.resolve(__dirname, "utils/leonPlaceholder.js");
+          const leonPlaceholder = path.resolve(
+            __dirname,
+            "utils/leonPlaceholder.js"
+          );
           const { isOk } = await handleImageToLeon(leonPlaceholder, {
             bucketName,
             key: `${key}${floderName}/`,

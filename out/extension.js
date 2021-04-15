@@ -57,11 +57,11 @@ function activate(context) {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
         try {
-            if (process.platform === 'darwin') {
+            if (process.platform === "darwin") {
                 exec(`echo ${imgUrl} | pbcopy`);
             }
             else {
-                spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl}| clip`]);
+                spawn("cmd.exe", ["/s", "/c", `echo ${imgUrl}| clip`]);
             }
             vscode.window.showInformationMessage("已复制到剪贴板。");
         }
