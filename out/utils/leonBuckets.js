@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dependency = exports.DepNodeProvider = void 0;
 const vscode = require("vscode");
+const path = require("path");
 const leonApi_1 = require("./leonApi");
 const fileTypes_1 = require("./fileTypes");
+const index_1 = require("./index");
 class DepNodeProvider {
     constructor() {
         this._onDidChangeTreeData = new vscode.EventEmitter();
@@ -36,6 +38,7 @@ class DepNodeProvider {
                             bucketName,
                             key: `/${item.key}`,
                             contextValue: isFile ? "File" : "Floder",
+                            isFile
                         }, item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""), item.key, isFile
                             ? vscode.TreeItemCollapsibleState.None
                             : vscode.TreeItemCollapsibleState.Collapsed);
@@ -85,7 +88,12 @@ class Dependency extends vscode.TreeItem {
                 this.ops, // 目前这里我们只传递一个 label
             ],
         };
+        this.iconPath = Dependency.getIconUriForLabel(this.ops);
         this.contextValue = ops.contextValue;
+    }
+    static getIconUriForLabel(ops) {
+        console.log(index_1.ITEM_ICON_MAP.get('floder'));
+        return vscode.Uri.file(path.join(__filename, "..", "..", "..", "images", "floder.svg" + ""));
     }
 }
 exports.Dependency = Dependency;

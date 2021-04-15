@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { getBuckets, getDataList } from "./leonApi";
 import { imgTypes, otherTypes } from "./fileTypes";
+import { ITEM_ICON_MAP } from './index';
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -33,6 +34,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
               bucketName,
               key: `/${item.key}`,
               contextValue: isFile ? "File" : "Floder",
+              isFile
             },
             item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""),
             item.key,
@@ -92,4 +94,20 @@ export class Dependency extends vscode.TreeItem {
       this.ops, // 目前这里我们只传递一个 label
     ],
   };
+
+  iconPath = Dependency.getIconUriForLabel(this.ops);
+
+  static getIconUriForLabel(ops: Object): vscode.Uri {
+    console.log(ITEM_ICON_MAP.get('floder'));
+    return vscode.Uri.file(
+      path.join(
+        __filename,
+        "..",
+        "..",
+        "..",
+        "images",
+        "floder.svg" + ""
+      )
+    );
+  }
 }
