@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { getBuckets, getDataList } from "./leonApi";
 import { imgTypes, otherTypes } from "./fileTypes";
-import { ITEM_ICON_MAP } from './index';
+import { ITEM_ICON_MAP } from "./index";
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -28,13 +28,14 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
       const res: any = await getDataList(bucketName, key);
       if (res.code === 0 && res.result) {
         const result = res.result.map((item: any) => {
-          const isFile = this.isFile(item.key);
+          const fileType = this.getFileType(item.key);
+          const isFile = fileType !== 'Floder';
           return new Dependency(
             {
               bucketName,
               key: `/${item.key}`,
-              contextValue: isFile ? "File" : "Floder",
-              isFile
+              contextValue: fileType,
+              isFile,
             },
             item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""),
             item.key,
@@ -55,7 +56,8 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
             {
               bucketName: item.bucket_name,
               key: "/",
-              contextValue: "Floder",
+              contextValue: "Bucket",
+              isFile: false,
             },
             item.bucket_name,
             item.asset_key,
@@ -69,9 +71,13 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
     }
   }
 
-  private isFile(fileName: string) {
-    const ends = [...imgTypes, ...otherTypes];
-    return ends.some((e) => fileName.includes(e));
+  private getFileType(fileName: string) {
+    if (imgTypes.some(e => fileName.includes(e))) {
+      return 'Img';
+    }
+    let type: any = otherTypes.find((e) => fileName.includes(e));
+    type = type ? type.replace('.', '') : "Floder";
+    return type;
   }
 }
 
@@ -90,24 +96,15 @@ export class Dependency extends vscode.TreeItem {
     title: this.label, // 标题
     command: "itemClick", // 命令 ID
     tooltip: this.label, // 鼠标覆盖时的小小提示框
-    arguments: [
-      this.ops, // 目前这里我们只传递一个 label
-    ],
+    arguments: [this.ops],
   };
 
-  iconPath = Dependency.getIconUriForLabel(this.ops);
+  iconPath = this.getIconUriForLabel(this.ops.contextValue);
 
-  static getIconUriForLabel(ops: Object): vscode.Uri {
-    console.log(ITEM_ICON_MAP.get('floder'));
+  private getIconUriForLabel(contextValue: string): vscode.Uri {
+    const iconName = ITEM_ICON_MAP.get(contextValue) || "";
     return vscode.Uri.file(
-      path.join(
-        __filename,
-        "..",
-        "..",
-        "..",
-        "images",
-        "floder.svg" + ""
-      )
+      path.join(__filename, "..", "..", "..", "images", iconName + "")
     );
   }
 }

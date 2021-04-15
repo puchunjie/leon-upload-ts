@@ -10,6 +10,7 @@ exports.otherTypes = [
     ".css",
     ".html",
     ".mp3",
-    ".mp4"
+    ".mp4",
+    ".md"
 ];
 //# sourceMappingURL=fileTypes.js.map

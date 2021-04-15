@@ -6,6 +6,18 @@ const computedViewUri = (bucketName, key, folder) => {
 };
 exports.computedViewUri = computedViewUri;
 exports.ITEM_ICON_MAP = new Map([
-    ['folder', 'floder.svg']
+    ['Bucket', 'bucket.svg'],
+    ['Floder', 'floder.svg'],
+    ['Img', 'img.svg'],
+    ['js', 'js.svg'],
+    ['css', 'css.svg'],
+    ['zip', 'zip.svg'],
+    ['text', 'text.svg'],
+    ['md', 'md.svg'],
+    ['mp3', 'mp3.svg'],
+    ['mp4', 'mp4.svg'],
+    ['text', 'text.svg'],
+    ['html', 'html.svg'],
+    ['unknow', 'unknow.svg']
 ]);
 //# sourceMappingURL=index.js.map

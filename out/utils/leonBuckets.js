@@ -33,12 +33,13 @@ class DepNodeProvider {
                 const res = yield leonApi_1.getDataList(bucketName, key);
                 if (res.code === 0 && res.result) {
                     const result = res.result.map((item) => {
-                        const isFile = this.isFile(item.key);
+                        const fileType = this.getFileType(item.key);
+                        const isFile = fileType !== 'Floder';
                         return new Dependency({
                             bucketName,
                             key: `/${item.key}`,
-                            contextValue: isFile ? "File" : "Floder",
-                            isFile
+                            contextValue: fileType,
+                            isFile,
                         }, item.key.replace(key.replace(/\//, ""), "").replace(/\//g, ""), item.key, isFile
                             ? vscode.TreeItemCollapsibleState.None
                             : vscode.TreeItemCollapsibleState.Collapsed);
@@ -56,7 +57,8 @@ class DepNodeProvider {
                         return new Dependency({
                             bucketName: item.bucket_name,
                             key: "/",
-                            contextValue: "Floder",
+                            contextValue: "Bucket",
+                            isFile: false,
                         }, item.bucket_name, item.asset_key, vscode.TreeItemCollapsibleState.Collapsed);
                     });
                     return Promise.resolve(result);
@@ -67,9 +69,13 @@ class DepNodeProvider {
             }
         });
     }
-    isFile(fileName) {
-        const ends = [...fileTypes_1.imgTypes, ...fileTypes_1.otherTypes];
-        return ends.some((e) => fileName.includes(e));
+    getFileType(fileName) {
+        if (fileTypes_1.imgTypes.some(e => fileName.includes(e))) {
+            return 'Img';
+        }
+        let type = fileTypes_1.otherTypes.find((e) => fileName.includes(e));
+        type = type ? type.replace('.', '') : "Floder";
+        return type;
     }
 }
 exports.DepNodeProvider = DepNodeProvider;
@@ -84,16 +90,14 @@ class Dependency extends vscode.TreeItem {
             title: this.label,
             command: "itemClick",
             tooltip: this.label,
-            arguments: [
-                this.ops, // 目前这里我们只传递一个 label
-            ],
+            arguments: [this.ops],
         };
-        this.iconPath = Dependency.getIconUriForLabel(this.ops);
+        this.iconPath = this.getIconUriForLabel(this.ops.contextValue);
         this.contextValue = ops.contextValue;
     }
-    static getIconUriForLabel(ops) {
-        console.log(index_1.ITEM_ICON_MAP.get('floder'));
-        return vscode.Uri.file(path.join(__filename, "..", "..", "..", "images", "floder.svg" + ""));
+    getIconUriForLabel(contextValue) {
+        const iconName = index_1.ITEM_ICON_MAP.get(contextValue) || "";
+        return vscode.Uri.file(path.join(__filename, "..", "..", "..", "images", iconName + ""));
     }
 }
 exports.Dependency = Dependency;

@@ -41,8 +41,8 @@
 				"command": "leonMain.addFloder",
 				"title": "新增文件夹",
 				"icon": {
-					"light": "images/add.svg",
-					"dark": "images/add.svg"
+					"light": "images/addFloder.svg",
+					"dark": "images/addFloder.svg"
 				}
 			},
 			{
@@ -82,7 +82,7 @@
 				},
 				{
 					"command": "leonMain.copyLink",
-					"when": "view == leonMain && viewItem == File",
+					"when": "view == leonMain && viewItem == Img",
 					"group": "inline"
 				}
 			]

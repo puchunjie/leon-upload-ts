@@ -40,7 +40,7 @@ const getDataList = (bucketName, key = "/") => {
             },
         };
         const url = "http://leonidapi.17usoft.com/libraapi2/leonid/v2/static/object";
-        console.log(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`);
+        // console.log(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`);
         http
             .get(`${url}?bucket_name=${bucketName}&key=${key}&limit=10000`, options, (resp) => {
             let data = "";

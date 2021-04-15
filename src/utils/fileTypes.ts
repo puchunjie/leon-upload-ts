@@ -8,5 +8,6 @@ export const otherTypes = [
   ".css",
   ".html",
   ".mp3",
-  ".mp4"
+  ".mp4",
+  ".md"
 ];

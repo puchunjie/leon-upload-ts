@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (process.platform === 'darwin') {
           exec(`echo ${imgUrl} | pbcopy`);
         } else {
-          spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl} | clip`]);
+          spawn('cmd.exe', ['/s', '/c', `echo ${imgUrl}| clip`]);
         }
         vscode.window.showInformationMessage("已复制到剪贴板。");
       } catch (error) {
