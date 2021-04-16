@@ -22,6 +22,10 @@
 				"title": "leon选择图片"
 			},
 			{
+				"command": "leonupload.uploadThis",
+				"title": "上传到狮子座"
+			},
+			{
 				"command": "leonMain.refreshEntry",
 				"title": "刷新列表",
 				"icon": {
@@ -55,6 +59,13 @@
 			}
 		],
 		"menus": {
+			"explorer/context": [
+				{
+					"when": "resourceScheme == file",
+					"command": "leonupload.uploadThis",
+					"group": "extension"
+				}
+			],
 			"editor/context": [
 				{
 					"when": "editorFocus",

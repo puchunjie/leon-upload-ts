@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const path = require("path");
-const { spawn, exec } = require("child_process");
 const upload_1 = require("./utils/upload");
 const leonBuckets_1 = require("./utils/leonBuckets");
 const index_1 = require("./utils/index");
@@ -29,7 +28,7 @@ function activate(context) {
     });
     context.subscriptions.push(refleshBuckets);
     // 右键选择图片上传
-    const rightUpload = vscode.commands.registerTextEditorCommand("leonupload.choosedImage", function () {
+    const choiseUpload = vscode.commands.registerTextEditorCommand("leonupload.choosedImage", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const uri = yield vscode.window.showOpenDialog({
                 canSelectFolders: false,
@@ -51,23 +50,26 @@ function activate(context) {
             }
         });
     });
+    context.subscriptions.push(choiseUpload);
+    // 右键直接上传资源
+    const rightUpload = vscode.commands.registerTextEditorCommand("leonupload.uploadThis", (itemData) => __awaiter(this, void 0, void 0, function* () {
+        console.log(path.resolve(itemData.document.fileName));
+        const localFile = path.resolve(itemData.document.fileName);
+        const { isOk, msg, url } = yield upload_1.handleImageToLeon(localFile);
+        console.log({ isOk, msg, url });
+        if (isOk) {
+            index_1.copyResouce(url, '上传成功，已复制资源链接到剪贴板。');
+        }
+        else {
+            vscode.window.showErrorMessage(msg);
+        }
+    }));
     context.subscriptions.push(rightUpload);
     // 点击复制链接
     const copyLink = vscode.commands.registerCommand("leonMain.copyLink", (itemData) => {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
-        try {
-            if (process.platform === "darwin") {
-                exec(`echo ${imgUrl} | pbcopy`);
-            }
-            else {
-                spawn("cmd.exe", ["/s", "/c", `echo ${imgUrl}| clip`]);
-            }
-            vscode.window.showInformationMessage("已复制到剪贴板。");
-        }
-        catch (error) {
-            vscode.window.showErrorMessage(error);
-        }
+        index_1.copyResouce(imgUrl);
     });
     context.subscriptions.push(copyLink);
     //文件点击预览

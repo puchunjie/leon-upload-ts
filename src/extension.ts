@@ -1,9 +1,8 @@
 import * as vscode from "vscode";
 const path = require("path");
-const { spawn, exec } = require("child_process");
 import { handleImageToLeon, addImageUrlToEditor } from "./utils/upload";
 import { DepNodeProvider, Dependency } from "./utils/leonBuckets";
-import { computedViewUri } from "./utils/index";
+import { computedViewUri, copyResouce } from "./utils/index";
 import { imgTypes } from "./utils/fileTypes";
 import { renderImg } from "./utils/render";
 
@@ -23,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(refleshBuckets);
 
   // 右键选择图片上传
-  const rightUpload = vscode.commands.registerTextEditorCommand(
+  const choiseUpload = vscode.commands.registerTextEditorCommand(
     "leonupload.choosedImage",
     async function () {
       const uri = await vscode.window.showOpenDialog({
@@ -45,6 +44,23 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
+  context.subscriptions.push(choiseUpload);
+
+  // 右键直接上传资源
+  const rightUpload = vscode.commands.registerTextEditorCommand(
+    "leonupload.uploadThis",
+    async (itemData: vscode.TextEditor) => {
+      console.log(path.resolve(itemData.document.fileName));
+      const localFile = path.resolve(itemData.document.fileName);
+      const { isOk, msg, url } = await handleImageToLeon(localFile);
+      console.log({ isOk, msg, url });
+      if (isOk) {
+        copyResouce(url, '上传成功，已复制资源链接到剪贴板。');
+      } else {
+        vscode.window.showErrorMessage(msg);
+      }
+    }
+  );
   context.subscriptions.push(rightUpload);
 
   // 点击复制链接
@@ -53,16 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
     (itemData: Dependency) => {
       const { bucketName, key } = itemData.ops;
       const imgUrl = computedViewUri(bucketName, key);
-      try {
-        if (process.platform === "darwin") {
-          exec(`echo ${imgUrl} | pbcopy`);
-        } else {
-          spawn("cmd.exe", ["/s", "/c", `echo ${imgUrl}| clip`]);
-        }
-        vscode.window.showInformationMessage("已复制到剪贴板。");
-      } catch (error) {
-        vscode.window.showErrorMessage(error);
-      }
+      copyResouce(imgUrl);
     }
   );
   context.subscriptions.push(copyLink);
