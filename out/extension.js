@@ -69,7 +69,7 @@ function activate(context) {
     const copyLink = vscode.commands.registerCommand("leonMain.copyLink", (itemData) => {
         const { bucketName, key } = itemData.ops;
         const imgUrl = index_1.computedViewUri(bucketName, key);
-        index_1.copyResouce(imgUrl);
+        index_1.copyResouce(imgUrl, '已复制到剪贴板');
     });
     context.subscriptions.push(copyLink);
     //文件点击预览
@@ -107,13 +107,24 @@ function activate(context) {
         if (!uri) {
             return;
         }
-        const localFile = uri[0].fsPath;
+        const { fsPath: localFile, path: localFilePath } = uri[0];
+        // 校验资源是否存在
+        const fileSplit = localFilePath.split('/');
+        const fileName = fileSplit[fileSplit.length - 1];
+        const onLineUrl = index_1.computedViewUri(bucketName, fileName, key);
+        const fileExistence = yield index_1.testResourcesExistence(onLineUrl);
+        if (fileExistence) {
+            index_1.copyResouce(onLineUrl);
+            vscode.window.showErrorMessage('资源已存在, 资源路径已复制到剪贴板！');
+            return;
+        }
         const { isOk, msg, url } = yield upload_1.handleImageToLeon(localFile, {
             bucketName,
             key,
         });
         if (isOk) {
             buckets.refresh();
+            index_1.copyResouce(url, '资源已上传，资源路径已复制到剪贴板！');
         }
         else {
             vscode.window.showErrorMessage(msg);

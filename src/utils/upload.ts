@@ -4,7 +4,7 @@ const url = require("url");
 const path = require("path");
 import * as vscode from "vscode";
 import leonParams from "./getLeonSetting";
-import { computedViewUri } from './index'
+import { computedViewUri } from './index';
 const boundary = "----WebKitFormBoundaryAGJoBU0nvDkk5Xb0";
 
 export const handleImageToLeon: any = async (localFile: string, ops?: any) => {

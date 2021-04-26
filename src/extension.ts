@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 const path = require("path");
 import { handleImageToLeon, addImageUrlToEditor } from "./utils/upload";
 import { DepNodeProvider, Dependency } from "./utils/leonBuckets";
-import { computedViewUri, copyResouce } from "./utils/index";
+import { computedViewUri, copyResouce, testResourcesExistence } from "./utils/index";
 import { imgTypes } from "./utils/fileTypes";
 import { renderImg } from "./utils/render";
 
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
     (itemData: Dependency) => {
       const { bucketName, key } = itemData.ops;
       const imgUrl = computedViewUri(bucketName, key);
-      copyResouce(imgUrl);
+      copyResouce(imgUrl, '已复制到剪贴板');
     }
   );
   context.subscriptions.push(copyLink);
@@ -107,7 +107,6 @@ export function activate(context: vscode.ExtensionContext) {
     "leonMain.addFile",
     async (itemData: Dependency) => {
       const { bucketName, key } = itemData.ops;
-
       const uri = await vscode.window.showOpenDialog({
         canSelectFolders: false,
         canSelectMany: false,
@@ -118,13 +117,25 @@ export function activate(context: vscode.ExtensionContext) {
       if (!uri) {
         return;
       }
-      const localFile = uri[0].fsPath;
+      const { fsPath: localFile, path: localFilePath } = uri[0];
+      
+      // 校验资源是否存在
+      const fileSplit = localFilePath.split('/');
+      const fileName = fileSplit[fileSplit.length - 1];
+      const onLineUrl = computedViewUri(bucketName, fileName, key);
+      const fileExistence = await testResourcesExistence(onLineUrl);
+      if (fileExistence) {
+        copyResouce(onLineUrl);
+        vscode.window.showErrorMessage('资源已存在, 资源路径已复制到剪贴板！');
+        return;
+      }
       const { isOk, msg, url } = await handleImageToLeon(localFile, {
         bucketName,
         key,
       });
       if (isOk) {
         buckets.refresh();
+        copyResouce(url, '资源已上传，资源路径已复制到剪贴板！');
       } else {
         vscode.window.showErrorMessage(msg);
       }
