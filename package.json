@@ -2,7 +2,7 @@
 	"name": "leonupload",
 	"displayName": "leon-upload",
 	"description": "狮子座图片上传插件",
-	"version": "2.0.5",
+	"version": "2.0.6",
 	"publisher": "jeremypcj",
 	"engines": {
 		"vscode": "^1.46.0"
