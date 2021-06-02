@@ -34,7 +34,7 @@ function activate(context) {
                 canSelectFolders: false,
                 canSelectMany: false,
                 filters: {
-                    images: ["png", "jpg", "svg"],
+                    images: ["png", "jpg", "svg", "gif"],
                 },
             });
             if (!uri) {
@@ -101,7 +101,7 @@ function activate(context) {
             canSelectFolders: false,
             canSelectMany: false,
             filters: {
-                images: ["png", "jpg", "svg"],
+                images: ["png", "jpg", "svg", "gif"],
             },
         });
         if (!uri) {

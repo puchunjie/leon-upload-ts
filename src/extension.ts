@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         canSelectFolders: false,
         canSelectMany: false,
         filters: {
-          images: ["png", "jpg", "svg"],
+          images: ["png", "jpg", "svg", "gif"],
         },
       });
       if (!uri) {
@@ -111,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
         canSelectFolders: false,
         canSelectMany: false,
         filters: {
-          images: ["png", "jpg", "svg"],
+          images: ["png", "jpg", "svg", "gif"],
         },
       });
       if (!uri) {
